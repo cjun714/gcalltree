@@ -59,3 +59,4 @@ func main() {
 			log.F(e)
 		}
 	}
+}
