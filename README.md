@@ -69,11 +69,11 @@ textDocument/definition
 - Document
   * Range line:10 character:15
   * Range line:39 character:8
-	...
+	* ...
 - ResultSet
-  - Definition
-	- Reference
-	- Hover
+  * Definition
+	* Reference
+	* Hover
 
 Each `range` is a pos of symbol in that doc
 
