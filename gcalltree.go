@@ -27,6 +27,49 @@ func init() {
 }
 
 func main() {
+	log.I("digraph g{")
+	file, e := os.Open("/z/dump.lsif")
+	if e != nil {
+		log.F(e)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.Contains(line, "edge") {
+			//log.I(line)
+			var edge Edge
+			e := json.Unmarshal([]byte(line), &edge)
+			if e != nil {
+				log.F(e)
+			}
+
+			if edge.InV != 0 {
+				log.I("  ", edge.OutV, "->", edge.InV, "[label = \"", edge.Label, "\"]")
+			} else {
+				log.I("  ", edge.OutV, "->", edge.InVs[0], "[label = \"", edge.Label, "\"]")
+			}
+		} else if strings.Contains(line, "vertex") {
+			var vertex Vertex
+			e := json.Unmarshal([]byte(line), &vertex)
+			if e != nil {
+				log.F(e)
+			}
+
+			log.I("  ", vertex.ID, "[label = \"", vertex.Label, "\"]")
+			//log.I(vertex.Label)
+		}
+
+		if e := scanner.Err(); e != nil {
+			log.F(e)
+		}
+	}
+	log.I("}")
+}
+
+func test() {
 	file, e := os.Open("/z/dump.lsif")
 	if e != nil {
 		log.F(e)
