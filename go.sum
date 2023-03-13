@@ -1,5 +1,5 @@
-github.com/cjun714/glog v0.0.0-20221027160957-d2673545e171 h1:cI1wZU3Gz0k3r+QAxbR8XO/2SdS34UM7l3578WGDf7A=
-github.com/cjun714/glog v0.0.0-20221027160957-d2673545e171/go.mod h1:D7+SGneKwe3JO8/MqhE4tdGSqYxHMcALJ5LS4D2ieL0=
+github.com/cjun714/glog v0.0.0-20230313004557-7b346cf0042f h1:OSL4xIHpMviMgTmssXdiIzdZdMEImVrjIDrmYEq01uo=
+github.com/cjun714/glog v0.0.0-20230313004557-7b346cf0042f/go.mod h1:D7+SGneKwe3JO8/MqhE4tdGSqYxHMcALJ5LS4D2ieL0=
 github.com/coreos/go-systemd/v22 v22.3.3-0.20220203105225-a9a7ef127534/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
 github.com/godbus/dbus/v5 v5.0.4/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/mattn/go-colorable v0.1.12 h1:jF+Du6AlPIjs2BiUiQlKOX0rt3SujHxPnksPKZbaA40=

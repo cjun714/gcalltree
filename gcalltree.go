@@ -22,6 +22,10 @@ type Edge struct {
 	Label string
 }
 
+func init() {
+	log.SetNullFormat()
+}
+
 func main() {
 	file, e := os.Open("/z/dump.lsif")
 	if e != nil {
@@ -42,17 +46,18 @@ func main() {
 			}
 
 			if edge.InV != 0 {
-				log.I(edge.ID, edge.InV)
+				log.I(edge.ID, edge.Label, edge.OutV, "->", edge.InV)
 			} else {
-				log.I(edge.ID, edge.InVs[0])
+				log.I(edge.ID, edge.Label, edge.OutV, "->", edge.InVs[0])
 			}
 		} else if strings.Contains(line, "vertex") {
-			var edge Edge
-			e := json.Unmarshal([]byte(line), &edge)
+			var vertex Vertex
+			e := json.Unmarshal([]byte(line), &vertex)
 			if e != nil {
 				log.F(e)
 			}
 
+			log.I(vertex.Label)
 		}
 
 		if e := scanner.Err(); e != nil {
