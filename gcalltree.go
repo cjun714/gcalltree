@@ -45,7 +45,7 @@ type Node struct {
 
 func (n Node) String() string {
 	id := strconv.Itoa(n.ID)
-	return id + " [label = \"" + id + " " + n.Label + "\"]"
+	return id + " [label = \"" + id + "[" + n.Label + "]\"]"
 }
 
 type MetaDataNode struct {
@@ -61,7 +61,7 @@ type MetaDataNode struct {
 
 func (n MetaDataNode) String() string {
 	id := strconv.Itoa(n.ID)
-	return id + "[label = \"" + id + " MetaData\"]"
+	return id + " [label = \"" + id + " MetaData\"]"
 }
 
 type ProjectNode struct {
@@ -71,7 +71,7 @@ type ProjectNode struct {
 
 func (n ProjectNode) String() string {
 	id := strconv.Itoa(n.ID)
-	return id + "[label = \"" + id + " Project\"]"
+	return id + " [label = \"" + id + "[" + n.Label + "]\"]"
 }
 
 type DocumentNode struct {
@@ -117,7 +117,7 @@ type HoverResultNode struct {
 
 func (n HoverResultNode) String() string {
 	id := strconv.Itoa(n.ID)
-	return id + " [label = \"" + id + "[" + n.Label + "]" + n.Result.Contents[0].Value + " \"]"
+	return id + " [label = \"" + id + "[" + n.Label + "]" + n.Result.Contents[0].Value + "\"]"
 }
 
 type Edge struct {
@@ -129,10 +129,13 @@ type Edge struct {
 }
 
 func (e Edge) String() string {
+	id := strconv.Itoa(e.ID)
 	if e.InV != 0 {
-		return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InV) + " [label =\"" + e.Label + "\"]"
+		return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InV) +
+			" [label = \"" + id + " " + e.Label + "\"]"
 	} else {
-		return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InVs[0]) + "  [label =\"" + e.Label + "\"]"
+		return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InVs[0]) +
+			" [label = \"" + id + " " + e.Label + "\"]"
 	}
 }
 
@@ -143,7 +146,9 @@ type ItemEdge struct {
 }
 
 func (e ItemEdge) String() string {
-	return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InVs[0]) + " [label =\"document: " + strconv.Itoa(e.Document) + "\"]"
+	id := strconv.Itoa(e.ID)
+	return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InVs[0]) +
+		" [label =\"" + id + " document:" + strconv.Itoa(e.Document) + " " + e.Property + "\"]"
 }
 
 type Graph struct {
@@ -152,14 +157,7 @@ type Graph struct {
 }
 
 func main() {
-	g, e := LoadLsif("/z/dump.lsif")
-	if e != nil {
-		log.F(e)
-	}
-
-	for _, edge := range g.Nodes {
-		log.I(edge)
-	}
+	ToDot("/z/dump.lsif")
 }
 
 func LoadLsif(path string) (Graph, error) {
@@ -248,97 +246,20 @@ func LoadLsif(path string) (Graph, error) {
 	return g, nil
 }
 
-func test2() {
-	var node HoverResultNode
-
-	str := `{"id":4,"type":"vertex","label":"hoverResult","result":{"contents":[{"language":"c","value":"char quote"}]}}`
-
-	e := json.Unmarshal([]byte(str), &node)
+func ToDot(path string) error {
+	g, e := LoadLsif(path)
 	if e != nil {
-		log.F(e)
+		return e
 	}
-	log.I(node.Result.Contents[0].Value)
-}
 
-func main2() {
 	log.I("digraph g{")
-	file, e := os.Open("/z/dump.lsif")
-	if e != nil {
-		log.F(e)
+	for _, node := range g.Nodes {
+		log.I(node)
 	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if strings.Contains(line, "edge") {
-			//log.I(line)
-			var edge Edge
-			e := json.Unmarshal([]byte(line), &edge)
-			if e != nil {
-				log.F(e)
-			}
-
-			if edge.InV != 0 {
-				log.I("  ", edge.OutV, "->", edge.InV, "[label = \"", edge.Label, "\"]")
-			} else {
-				log.I("  ", edge.OutV, "->", edge.InVs[0], "[label = \"", edge.Label, "\"]")
-			}
-		} else if strings.Contains(line, "vertex") {
-			var vertex Vertex
-			e := json.Unmarshal([]byte(line), &vertex)
-			if e != nil {
-				log.F(e)
-			}
-
-			log.I("  ", vertex.ID, "[label = \"", vertex.Label, "\"]")
-			//log.I(vertex.Label)
-		}
-
-		if e := scanner.Err(); e != nil {
-			log.F(e)
-		}
+	for _, edge := range g.Edges {
+		log.I(edge)
 	}
 	log.I("}")
-}
 
-func test() {
-	file, e := os.Open("/z/dump.lsif")
-	if e != nil {
-		log.F(e)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if strings.Contains(line, "edge") {
-			//log.I(line)
-			var edge Edge
-			e := json.Unmarshal([]byte(line), &edge)
-			if e != nil {
-				log.F(e)
-			}
-
-			if edge.InV != 0 {
-				log.I(edge.ID, edge.Label, edge.OutV, "->", edge.InV)
-			} else {
-				log.I(edge.ID, edge.Label, edge.OutV, "->", edge.InVs[0])
-			}
-		} else if strings.Contains(line, "vertex") {
-			var vertex Vertex
-			e := json.Unmarshal([]byte(line), &vertex)
-			if e != nil {
-				log.F(e)
-			}
-
-			log.I(vertex.Label)
-		}
-
-		if e := scanner.Err(); e != nil {
-			log.F(e)
-		}
-	}
+	return nil
 }
