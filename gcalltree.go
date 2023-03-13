@@ -165,7 +165,7 @@ func LoadLsif(path string) (Graph, error) {
 	g.Nodes = make(map[int]interface{}, 100) // TODO estimate size by .lsif size
 	g.Edges = make(map[int]interface{}, 100) // TODO estimate size by .lsif size
 
-	file, e := os.Open("/z/dump.lsif")
+	file, e := os.Open(path)
 	if e != nil {
 		return g, e
 	}
