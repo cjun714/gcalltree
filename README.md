@@ -71,15 +71,15 @@ textDocument/definition
   * Range line:39 character:8
 	...
 - ResultSet
-  * Definition
-	* Reference
-	* Hover
+  - Definition
+	- Reference
+	- Hover
 
 Each `range` is a pos of symbol in that doc
 
-doc ─┬─ range ── resultSet ─┬─ define ── range
-     ├─ range               ├─ refer  ── range
-     ├─ range               └─ hover  ── range
+    doc ─┬─ range ── resultSet ─┬─ define ── range
+         ├─ range               ├─ refer  ── range
+         ├─ range               └─ hover  ── range
 
 Core understanding:
 - `doc` has multi `range``
