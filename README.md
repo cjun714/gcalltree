@@ -64,3 +64,28 @@ textDocument/definition
 - diagon: ascii flow chart
 - go-callvis: call graph of a Go
 - Graphviz: generate lsif relation chart
+
+## Lsif Spec
+- Document
+  * Range line:10 character:15
+  * Range line:39 character:8
+	...
+- ResultSet
+  * Definition
+	* Reference
+	* Hover
+
+Each `range` is a pos of symbol in that doc
+
+doc ─┬─ range ── resultSet ─┬─ define ── range
+     ├─ range               ├─ refer  ── range
+     ├─ range               └─ hover  ── range
+
+Core understanding:
+- `doc` has multi `range``
+- `range` has 3 relations:
+  * `define`
+	* `refer`
+	* `hover`
+- `define`/`refer`/`hover` correlate with other `ranges`
+- `range` doesn't include file path, file path exists in out 'edge'

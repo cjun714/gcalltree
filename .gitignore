@@ -1,5 +1,11 @@
+.xmake
+build
+compile_commands.json
+
 gcalltree
 main
+
 *.dot
 *.png
+*.lsif
 

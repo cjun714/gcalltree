@@ -130,12 +130,14 @@ type Edge struct {
 
 func (e Edge) String() string {
 	id := strconv.Itoa(e.ID)
+	label := strings.Replace(e.Label, "textDocument", "", -1)
+
 	if e.InV != 0 {
 		return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InV) +
-			" [label = \"" + id + " " + e.Label + "\"]"
+			" [label = \"" + id + " " + label + "\"]"
 	} else {
 		return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InVs[0]) +
-			" [label = \"" + id + " " + e.Label + "\"]"
+			" [label = \"" + id + " " + label + "\"]"
 	}
 }
 
@@ -148,7 +150,7 @@ type ItemEdge struct {
 func (e ItemEdge) String() string {
 	id := strconv.Itoa(e.ID)
 	return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InVs[0]) +
-		" [label =\"" + id + " document:" + strconv.Itoa(e.Document) + " " + e.Property + "\"]"
+		" [label =\"" + id + " doc:" + strconv.Itoa(e.Document) + " " + e.Property + "\"]"
 }
 
 type Graph struct {
