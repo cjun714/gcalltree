@@ -82,16 +82,42 @@ Each `range` is a pos of symbol in that doc
          ├─ range               └─ hover  ── range
 
 Core understanding:
-- `doc` has multi `range``
-- `range` has 3 relations:
-  * `define`
-	* `refer`
-	* `hover`
-- `define`/`refer`/`hover` correlate with other `ranges`
+- `doc` contains multi `range``
+- each `range` link to `resultSet`, defined symbol and refered symbol link to
+  same `resultSet`
+- `resultSet` link to 3 nodes:
+  * `defineResult`
+	* `referResult`
+	* `hoverResult`
+- `defineResult`/`referResult` link with a `range`
 - `range` doesn't include file path, file path exists in out 'edge'
+
+```
+                                                                                 Doc:1
+                                                                          +-----------------------------------------------------------+
+                                                                          v                                                           |
++-------------------+  contains      +------------------------------------------+                                                     |
+|  1[Doc]./main.c   | -------------> |             2[Range]line 0:5             | -+                                                  |
++-------------------+                +------------------------------------------+  |                                                  |
+  |                                    ^                 ^                |        |                                                  |
+  | contains                           | Doc:1 refer     | Doc:1 define   | next   | next                                             |
+  v                                    |                 |                v        v                                                  |
++-------------------+  Doc:1 refer   +----------------+  |              +-----------------------------------------------+  define   +-----------------+
+| 7[Range]line 7:13 | <------------- | 5[ReferResult] | -+              |                 3[ResultSet]                  | --------> | 4[DefineResutl] |
++-------------------+                +----------------+                 +-----------------------------------------------+           +-----------------+
+  |                                    ^                refer             |        ^        |
+  |                                    +----------------------------------+        | next   | hover
+  |                                                                                |        v
+  |                                                                                |      +-----------------------------+
+  +--------------------------------------------------------------------------------+      | 6[HoverResult]void foo(int) |
+```                                                                                        +-----------------------------+
 
 ## cmd References
 lsif:
 ``` bash
 > lsif-clang compile_commands.json > dump.lsif # c/c++
 ```
+
+## Reference
+https://unix.stackexchange.com/questions/126630/creating-diagrams-in-ascii
+https://stackoverflow.com/questions/3211801/graphviz-and-ascii-output
