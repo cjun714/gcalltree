@@ -211,7 +211,7 @@ func ToDot(path string) error {
 		} else if nd, ok := node.(DocumentNode); ok {
 			log.I(fmt.Sprintf(`%d [label = "%d[%s]%s"]`, nd.ID, nd.ID, nd.Label, nd.Uri))
 		} else if nd, ok := node.(RangeNode); ok {
-			log.I(fmt.Sprintf(`%d [label = "%d[%s]%s"]`, nd.ID, nd.ID, nd.Label, nd.Start))
+			log.I(fmt.Sprintf(`%d [label = "%d[%s]line:%d:%d"]`, nd.ID, nd.ID, nd.Label, nd.Start.Line, nd.Start.Character))
 		} else if nd, ok := node.(HoverResultNode); ok {
 			log.I(fmt.Sprintf(`%d [label = "%d[%s]%s"]`, nd.ID, nd.ID, nd.Label, nd.Result.Contents[0].Value))
 		} else if nd, ok := node.(Node); ok {
