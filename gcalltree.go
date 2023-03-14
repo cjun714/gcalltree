@@ -76,7 +76,13 @@ type RangeNode struct {
 	End   Pos
 }
 
-type HoverResultNode struct {
+type ResultSetNode Node
+
+type DefinitionNode Node
+
+type ReferenceNode Node
+
+type HoverNode struct {
 	Node
 	Result struct {
 		Contents []struct {
@@ -106,7 +112,15 @@ type Graph struct {
 }
 
 func main() {
-	ToDot("/z/dump.lsif")
+	path := "/z/dump.lsif"
+	ToDot(path)
+
+	//g, e := LoadLsif(path)
+	//if e != nil {
+	//log.F(e)
+	//}
+
+	//genCall(g)
 }
 
 func LoadLsif(path string) (Graph, error) {
@@ -174,15 +188,29 @@ func LoadLsif(path string) (Graph, error) {
 					return g, e
 				}
 				g.Nodes[node.ID] = node
-			} else if strings.Contains(line, NODE_LABEL_HOVER_RESULT) {
-				var node HoverResultNode
+			} else if strings.Contains(line, NODE_LABEL_RESULTSET) {
+				var node ResultSetNode
 				e := json.Unmarshal([]byte(line), &node)
 				if e != nil {
 					return g, e
 				}
 				g.Nodes[node.ID] = node
-			} else {
-				var node Node
+			} else if strings.Contains(line, NODE_LABEL_DEFINITION_RESULT) {
+				var node DefinitionNode
+				e := json.Unmarshal([]byte(line), &node)
+				if e != nil {
+					return g, e
+				}
+				g.Nodes[node.ID] = node
+			} else if strings.Contains(line, NODE_LABEL_REFERENCE_RESULT) {
+				var node ReferenceNode
+				e := json.Unmarshal([]byte(line), &node)
+				if e != nil {
+					return g, e
+				}
+				g.Nodes[node.ID] = node
+			} else if strings.Contains(line, NODE_LABEL_HOVER_RESULT) {
+				var node HoverNode
 				e := json.Unmarshal([]byte(line), &node)
 				if e != nil {
 					return g, e
@@ -213,11 +241,15 @@ func ToDot(path string) error {
 		} else if nd, ok := node.(RangeNode); ok {
 			log.I(fmt.Sprintf(`%d [label = "%d[%s]line:%d:%d"]`,
 				nd.ID, nd.ID, nd.Label, nd.Start.Line, nd.Start.Character))
-		} else if nd, ok := node.(HoverResultNode); ok {
+		} else if nd, ok := node.(ResultSetNode); ok {
+			log.I(fmt.Sprintf(`%d [label = "%d[%s]"]`, nd.ID, nd.ID, nd.Label))
+		} else if nd, ok := node.(DefinitionNode); ok {
+			log.I(fmt.Sprintf(`%d [label = "%d[%s]"]`, nd.ID, nd.ID, nd.Label))
+		} else if nd, ok := node.(ReferenceNode); ok {
+			log.I(fmt.Sprintf(`%d [label = "%d[%s]"]`, nd.ID, nd.ID, nd.Label))
+		} else if nd, ok := node.(HoverNode); ok {
 			log.I(fmt.Sprintf(`%d [label = "%d[%s]%s"]`,
 				nd.ID, nd.ID, nd.Label, nd.Result.Contents[0].Value))
-		} else if nd, ok := node.(Node); ok {
-			log.I(fmt.Sprintf(`%d [label = "%d[%s]"]`, nd.ID, nd.ID, nd.Label))
 		}
 	}
 
@@ -238,4 +270,18 @@ func ToDot(path string) error {
 	log.I("}")
 
 	return nil
+}
+
+func genCall(g Graph) {
+	nodes := g.Nodes
+	//edges := g.Edges
+
+	for _, node := range nodes {
+		if nd, ok := node.(Node); ok &&
+			strings.Contains(NODE_LABEL_RANGE, nd.Label) {
+			log.I(nd.Label)
+
+		}
+	}
+
 }
