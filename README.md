@@ -89,3 +89,9 @@ Core understanding:
 	* `hover`
 - `define`/`refer`/`hover` correlate with other `ranges`
 - `range` doesn't include file path, file path exists in out 'edge'
+
+## cmd References
+lsif:
+``` bash
+> lsif-clang compile_commands.json > dump.lsif # c/c++
+```
