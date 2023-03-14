@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -258,9 +259,21 @@ func ToDot(path string) error {
 	for _, node := range g.Nodes {
 		log.I(node)
 	}
+
 	for _, edge := range g.Edges {
-		log.I(edge)
+		if eg, ok := edge.(ItemEdge); ok { // ItemEdge
+			log.I(fmt.Sprintf(`%d -> %d [label = "%d|doc:%d|%s"]`,
+				eg.OutV, eg.InVs[0], eg.ID, eg.Document, eg.Property))
+		} else if eg, ok := edge.(Edge); ok { // Edge
+			label := strings.Replace(eg.Label, "textDocument/", "", -1)
+			if eg.InV != 0 {
+				log.I(fmt.Sprintf(`%d -> %d [label = "%s"]`, eg.OutV, eg.InV, label))
+			} else {
+				log.I(fmt.Sprintf(`%d -> %d [label = "%s"]`, eg.OutV, eg.InVs[0], label))
+			}
+		}
 	}
+
 	log.I("}")
 
 	return nil
