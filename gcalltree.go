@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/cjun714/glog/log"
@@ -44,11 +43,6 @@ type Node struct {
 	Label string
 }
 
-func (n Node) String() string {
-	id := strconv.Itoa(n.ID)
-	return id + " [label = \"" + id + "[" + n.Label + "]\"]"
-}
-
 type MetaDataNode struct {
 	Node
 	Version          string
@@ -60,19 +54,9 @@ type MetaDataNode struct {
 	}
 }
 
-func (n MetaDataNode) String() string {
-	id := strconv.Itoa(n.ID)
-	return id + " [label = \"" + id + " MetaData\"]"
-}
-
 type ProjectNode struct {
 	Node
 	Kind string
-}
-
-func (n ProjectNode) String() string {
-	id := strconv.Itoa(n.ID)
-	return id + " [label = \"" + id + "[" + n.Label + "]\"]"
 }
 
 type DocumentNode struct {
@@ -81,29 +65,15 @@ type DocumentNode struct {
 	LanguageId string
 }
 
-func (n DocumentNode) String() string {
-	id := strconv.Itoa(n.ID)
-	return id + " [label = \"" + id + "[" + n.Label + "]" + n.Uri + "\"]"
-}
-
 type Pos struct {
 	Line      int
 	Character int
-}
-
-func (p Pos) String() string {
-	return "pos: " + strconv.Itoa(p.Line) + ":" + strconv.Itoa(p.Character)
 }
 
 type RangeNode struct {
 	Node
 	Start Pos
 	End   Pos
-}
-
-func (n RangeNode) String() string {
-	id := strconv.Itoa(n.ID)
-	return id + " [label = \"" + id + "[" + n.Label + "]" + n.Start.String() + "\"]"
 }
 
 type HoverResultNode struct {
@@ -116,11 +86,6 @@ type HoverResultNode struct {
 	}
 }
 
-func (n HoverResultNode) String() string {
-	id := strconv.Itoa(n.ID)
-	return id + " [label = \"" + id + "[" + n.Label + "]" + n.Result.Contents[0].Value + "\"]"
-}
-
 type Edge struct {
 	ID    int
 	Label string
@@ -129,29 +94,10 @@ type Edge struct {
 	InVs  []int
 }
 
-func (e Edge) String() string {
-	id := strconv.Itoa(e.ID)
-	label := strings.Replace(e.Label, "textDocument", "", -1)
-
-	if e.InV != 0 {
-		return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InV) +
-			" [label = \"" + id + " " + label + "\"]"
-	} else {
-		return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InVs[0]) +
-			" [label = \"" + id + " " + label + "\"]"
-	}
-}
-
 type ItemEdge struct {
 	Edge
 	Document int
 	Property string
-}
-
-func (e ItemEdge) String() string {
-	id := strconv.Itoa(e.ID)
-	return strconv.Itoa(e.OutV) + " -> " + strconv.Itoa(e.InVs[0]) +
-		" [label =\"" + id + " doc:" + strconv.Itoa(e.Document) + " " + e.Property + "\"]"
 }
 
 type Graph struct {
@@ -256,8 +202,21 @@ func ToDot(path string) error {
 	}
 
 	log.I("digraph g{")
+
 	for _, node := range g.Nodes {
-		log.I(node)
+		if nd, ok := node.(MetaDataNode); ok {
+			log.I(fmt.Sprintf(`%d [label = "%d[%s]"]`, nd.ID, nd.ID, nd.Label))
+		} else if nd, ok := node.(ProjectNode); ok {
+			log.I(fmt.Sprintf(`%d [label = "%d[%s]"]`, nd.ID, nd.ID, nd.Label))
+		} else if nd, ok := node.(DocumentNode); ok {
+			log.I(fmt.Sprintf(`%d [label = "%d[%s]%s"]`, nd.ID, nd.ID, nd.Label, nd.Uri))
+		} else if nd, ok := node.(RangeNode); ok {
+			log.I(fmt.Sprintf(`%d [label = "%d[%s]%s"]`, nd.ID, nd.ID, nd.Label, nd.Start))
+		} else if nd, ok := node.(HoverResultNode); ok {
+			log.I(fmt.Sprintf(`%d [label = "%d[%s]%s"]`, nd.ID, nd.ID, nd.Label, nd.Result.Contents[0].Value))
+		} else if nd, ok := node.(Node); ok {
+			log.I(fmt.Sprintf(`%d [label = "%d[%s]"]`, nd.ID, nd.ID, nd.Label))
+		}
 	}
 
 	for _, edge := range g.Edges {
