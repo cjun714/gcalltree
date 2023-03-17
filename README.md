@@ -92,7 +92,7 @@ Core understanding:
 - `defineResult`/`referResult` link with a `range`
 - `range` doesn't include file path, file path exists in out 'edge'
 
-``` json
+``` c
 +-------------------+  contains  +--------------------------------------+      Doc:1
 |  1[Doc]./main.c   | ---------> |         2[Range]line 0:5             | <---------------+                                                    |
 +-------------------+            +--------------------------------------+                 |
@@ -107,7 +107,8 @@ Core understanding:
   |                                                             |    v
   |                          next                               |  +-----------------------------+
   +-------------------------------------------------------------+  | 6[HoverResult]void foo(int) |
-```                                                                +-----------------------------+
+                                                                   +-----------------------------+
+```
 
 ## cmd References
 lsif:
