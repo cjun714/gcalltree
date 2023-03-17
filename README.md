@@ -92,18 +92,18 @@ Core understanding:
 - `defineResult`/`referResult` link with a `range`
 - `range` doesn't include file path, file path exists in out 'edge'
 
-``` c
-+-------------------+  contains  +--------------------------------------+      Doc:1
-|  1[Doc]./main.c   | ---------> |         2[Range]line 0:5             | <---------------+                                                    |
-+-------------------+            +--------------------------------------+                 |
-  |                                    ^          ^          |       |                    |
-  | contains                     Doc:1 refer Doc:1 define  next     next                  |
-  v                                    |          |          v       v                    |
+``` ascii
++-------------------+  contains  +--------------------------------------+     Doc:1
+|  1[Doc]./main.c   | ---------> |         2[Range]line 0:5             | <------------+                                                    |
++-------------------+            +--------------------------------------+              |
+  |                                    ^          ^          |      |                  |
+  | contains                     Doc:1 refer Doc:1 define   next   next                |
+  v                                    |          |          v      v                  |
 +-------------------+  Doc:1 refer  +----------------+   +--------------+  define  +-----------------+
 | 7[Range]line 7:13 | <------------ | 5[ReferResult] |   | 3[ResultSet] | -------> | 4[DefineResutl] |
 +-------------------+               +----------------+   +--------------+          +-----------------+
   |                                    ^      refer        |    ^    |
-  |                                    +-------------------+    |   hover
+  |                                    +-------------------+    |    |hover
   |                                                             |    v
   |                          next                               |  +-----------------------------+
   +-------------------------------------------------------------+  | 6[HoverResult]void foo(int) |
