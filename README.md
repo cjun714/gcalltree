@@ -92,7 +92,7 @@ Core understanding:
 - `defineResult`/`referResult` link with a `range`
 - `range` doesn't include file path, file path exists in out 'edge'
 
-```
+``` ascii
 +-------------------+  contains  +--------------------------------------+      Doc:1
 |  1[Doc]./main.c   | ---------> |         2[Range]line 0:5             | <---------------+                                                    |
 +-------------------+            +--------------------------------------+                 |
